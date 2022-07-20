@@ -30,7 +30,7 @@ public class VehicleDataService {
 	}
 
 	public VehicleData findByVin(String vehicledata_vin) {
-		Optional<VehicleData> obj = repository.findByVin(vehicledata_vin);
+		Optional<VehicleData> obj = repository.findByVin(vehicledata_vin.toUpperCase());
 		if (!obj.isEmpty()) {
 			return obj.get();
 		} else {
@@ -41,10 +41,11 @@ public class VehicleDataService {
 	public VehicleData insert(VehicleData obj) {
 		List<VehicleData> list = this.findAll();
 		for (VehicleData vd : list) {
-			if (vd.getVehicledata_vin().equals(obj.getVehicledata_vin())) {
+			if (vd.getVehicledata_vin().toUpperCase().equals(obj.getVehicledata_vin().toUpperCase())) {
 				throw new DatabaseException("VIN already registered");
 			}
 		}
+		obj.setVehicledata_vin(obj.getVehicledata_vin().toUpperCase());
 		return repository.save(obj);
 	}
 
@@ -61,7 +62,7 @@ public class VehicleDataService {
 		try {
 			repository.deleteById(obj.getVehicledata_id());
 		} catch (EmptyResultDataAccessException e) {
-			throw new ResourceNotFoundException(vehicledata_vin);
+			throw new ResourceNotFoundException(vehicledata_vin.toUpperCase());
 		}
 	}
 
@@ -71,7 +72,7 @@ public class VehicleDataService {
 			VehicleData entity = repository.getOne(id);
 			List<VehicleData> list = this.findAll();
 			for (VehicleData vd : list) {
-				if (vd.getVehicledata_vin().equals(obj.getVehicledata_vin())) {
+				if (vd.getVehicledata_vin().toUpperCase().equals(obj.getVehicledata_vin().toUpperCase())) {
 					if (vd.getVehicledata_id() == id) {
 						UpdateData(entity, obj);
 						return repository.save(entity);
@@ -88,7 +89,7 @@ public class VehicleDataService {
 	}
 
 	private void UpdateData(VehicleData entity, VehicleData obj) {
-		entity.setVehicledata_vin(obj.getVehicledata_vin());
+		entity.setVehicledata_vin(obj.getVehicledata_vin().toUpperCase());
 		entity.setVehicledata_odometer(obj.getVehicledata_odometer());
 		entity.setVehicledata_tire_pressure(obj.getVehicledata_tire_pressure());
 		entity.setVehicledata_status(obj.getVehicledata_status());
